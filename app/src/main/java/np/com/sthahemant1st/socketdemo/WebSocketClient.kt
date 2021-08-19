@@ -37,11 +37,11 @@ class WebSocketClient {
     }
 
     private fun initWebSocket() {
-        client = OkHttpClient()
         Log.e("socketCheck", "initWebSocket() socketurl = $socketUrl")
-        val request = Request.Builder().url(socketUrl).build()
+        client = OkHttpClient()
+        val request = Request.Builder().url("ws://echo.websocket.org").build()
         webSocket = client!!.newWebSocket(request, webSocketListener)
-
+        //this must me done else memory leak will be caused
         client!!.dispatcher.executorService.shutdown()
     }
 
@@ -59,7 +59,7 @@ class WebSocketClient {
     //send
     fun sendMessage(message: String) {
         Log.e("socketCheck", "sendMessage($message)")
-        webSocket.send(message)
+        if (::webSocket.isInitialized) webSocket.send(message)
     }
 
 
@@ -76,7 +76,7 @@ class WebSocketClient {
 
     //Both does nothing if the web socket has already been closed or canceled.
     fun disconnect() {
-        webSocket.close(1000, "Do not need connection anymore.")
+        if (::webSocket.isInitialized) webSocket.close(1000, "Do not need connection anymore.")
         shouldReconnect = false
     }
 

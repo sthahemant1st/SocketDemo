@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         webSocketClient = WebSocketClient.getInstance()
         webSocketClient.setSocketUrl( "ws://echo.websocket.org")
         webSocketClient.setListener(socketListener)
-        webSocketClient.connect()
+//        webSocketClient.connect()
 
         setContent {
             SocketDemoTheme {
