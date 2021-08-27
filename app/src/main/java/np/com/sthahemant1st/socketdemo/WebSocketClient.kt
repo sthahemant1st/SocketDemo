@@ -6,6 +6,11 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocketListener
 
+/*
+* We are making separate webSocketClient where all code related to socket is written and
+* singleton instance of webSocketClient is made so that we can do stuffs with single socket
+* from anywhere in the project
+* */
 class WebSocketClient {
     private lateinit var webSocket: okhttp3.WebSocket
     private var socketListener: SocketListener? = null
@@ -39,7 +44,7 @@ class WebSocketClient {
     private fun initWebSocket() {
         Log.e("socketCheck", "initWebSocket() socketurl = $socketUrl")
         client = OkHttpClient()
-        val request = Request.Builder().url("ws://echo.websocket.org").build()
+        val request = Request.Builder().url(url = socketUrl).build()
         webSocket = client!!.newWebSocket(request, webSocketListener)
         //this must me done else memory leak will be caused
         client!!.dispatcher.executorService.shutdown()
@@ -89,27 +94,22 @@ class WebSocketClient {
         //called when connection succeeded
         //we are sending a message just after the socket is opened
         override fun onOpen(webSocket: okhttp3.WebSocket, response: Response) {
-//            webSocket.send("Initial message form onOpen()")
             Log.e("socketCheck", "onOpen()")
-//            super.onOpen(webSocket, response)
         }
 
         //called when text message received
         override fun onMessage(webSocket: okhttp3.WebSocket, text: String) {
             socketListener?.onMessage(text)
-//            super.onMessage(webSocket, text)
         }
 
         //called when binary message received
         override fun onClosing(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
             Log.e("socketCheck", "onClosing()")
-//            super.onClosing(webSocket, code, reason)
         }
 
         override fun onClosed(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
             //called when no more messages and the connection should be released
             Log.e("socketCheck", "onClosed()")
-//            super.onClosed(webSocket, code, reason)
             if (shouldReconnect) reconnect()
         }
 
@@ -118,7 +118,6 @@ class WebSocketClient {
         ) {
             Log.e("socketCheck", "onFailure()")
             if (shouldReconnect) reconnect()
-//            super.onFailure(webSocket, t, response)
         }
     }
 }

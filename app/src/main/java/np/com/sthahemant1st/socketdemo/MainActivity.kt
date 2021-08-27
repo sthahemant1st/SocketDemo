@@ -13,13 +13,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import np.com.sthahemant1st.socketdemo.ui.theme.SocketDemoTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var webSocketClient: WebSocketClient
-    val socketListener = object : WebSocketClient.SocketListener {
+    private val socketKey = "OoxcCdu52cCwxFKF3SqRd6ZlLJW2g9OpMokNsIlw"
+
+    private val socketListener = object : WebSocketClient.SocketListener {
         override fun onMessage(message: String) {
             Log.e("socketCheck onMessage", message)
         }
@@ -29,7 +30,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         webSocketClient = WebSocketClient.getInstance()
-        webSocketClient.setSocketUrl( "ws://echo.websocket.org")
+        webSocketClient.setSocketUrl("wss://demo.piesocket.com/v3/1?api_key=$socketKey")
         webSocketClient.setListener(socketListener)
 //        webSocketClient.connect()
 
@@ -44,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     },
                     onSendMessage = {
                         webSocketClient.sendMessage(it)
-                    }
+                    },
                 )
             }
         }
@@ -52,7 +53,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(onSendMessage: (String) -> Unit, onDisconnect: () -> Unit, onConnect: () -> Unit) {
+fun MainScreen(
+    onSendMessage: (String) -> Unit,
+    onDisconnect: () -> Unit,
+    onConnect: () -> Unit,
+) {
     var message by remember { mutableStateOf("") }
 
     Column(
@@ -72,7 +77,10 @@ fun MainScreen(onSendMessage: (String) -> Unit, onDisconnect: () -> Unit, onConn
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
-            Button(modifier = Modifier.fillMaxWidth(), onClick = { onSendMessage(message) }) {
+            Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                onSendMessage(message)
+                message = ""
+            }) {
                 Text(text = "Send Message")
             }
             Button(modifier = Modifier.fillMaxWidth(), onClick = { onConnect() }) {
@@ -86,10 +94,3 @@ fun MainScreen(onSendMessage: (String) -> Unit, onDisconnect: () -> Unit, onConn
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    SocketDemoTheme {
-        MainScreen({},{},{})
-    }
-}
