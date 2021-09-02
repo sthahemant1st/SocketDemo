@@ -18,6 +18,8 @@ import np.com.sthahemant1st.socketdemo.ui.theme.SocketDemoTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var webSocketClient: WebSocketClient
+    //you can get your socket key form by registering to pieSocket form here
+    // https://www.piesocket.com/register?plan=free
     private val socketKey = "OoxcCdu52cCwxFKF3SqRd6ZlLJW2g9OpMokNsIlw"
 
     private val socketListener = object : WebSocketClient.SocketListener {
@@ -30,7 +32,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         webSocketClient = WebSocketClient.getInstance()
-        webSocketClient.setSocketUrl("wss://demo.piesocket.com/v3/1?api_key=$socketKey")
+        webSocketClient.setSocketUrl("wss://demo.piesocket.com/v3/1?api_key=$socketKey&notify_self")
         webSocketClient.setListener(socketListener)
 //        webSocketClient.connect()
 
